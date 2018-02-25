@@ -220,6 +220,10 @@ class CmdEditorBase(Command):
 
     editor = None
 
+    def print_branch_message(message):
+        print(message)
+        return true
+
     def parse(self):
         """
         Handles pre-parsing
@@ -233,12 +237,14 @@ class CmdEditorBase(Command):
             w   - word(s) (string), could be encased in quotes.
             txt - extra text (string), could be encased in quotes.
         """
-
         editor = self.caller.ndb._eveditor
+        print("/evennia/utils/eveditor.py parse 242")
         if not editor:
+            print("/evennia/utils/eveditor.py parse 242 path1")
             # this will completely replace the editor
             _load_editor(self.caller)
             editor = self.caller.ndb._eveditor
+        print("/evennia/utils/eveditor.py parse 242 path2")
         self.editor = editor
 
         linebuffer = self.editor.get_buffer().split("\n")
@@ -251,16 +257,27 @@ class CmdEditorBase(Command):
         # will be kept together and extra whitespace preserved. You
         # can input quotes on the line by alternating single and
         # double quotes.
-        arglist = [part for part in _RE_GROUP.findall(self.args) if part]
+        print("/evennia/utils/eveditor.py parse 261")
+        arglist = [part for part in _RE_GROUP.findall(self.args) if part and print_branch_message("/evennia/utils/eveditor.py parse 261 path1")]
+        print("/evennia/utils/eveditor.py parse 261 path2")
         temp = []
+        print("/evennia/utils/eveditor.py parse 265")
         for arg in arglist:
+            print("/evennia/utils/eveditor.py parse 265 path1")
             # we want to clean the quotes, but only one type,
             # in case we are nesting.
+            print("/evennia/utils/eveditor.py parse 271")
+            print("/evennia/utils/eveditor.py parse 274")
             if arg.startswith('"'):
+                print("/evennia/utils/eveditor.py parse 271 path1")
                 arg.strip('"')
             elif arg.startswith("'"):
+                print("/evennia/utils/eveditor.py parse 274 path1")
                 arg.strip("'")
+            print("/evennia/utils/eveditor.py parse 271 path2")
+            print("/evennia/utils/eveditor.py parse 274 path2")
             temp.append(arg)
+        print("/evennia/utils/eveditor.py parse 265 path2")
         arglist = temp
 
         # A dumb split, without grouping quotes
@@ -275,31 +292,55 @@ class CmdEditorBase(Command):
 
         lstart, lend = cline, cline + 1
         linerange = False
+        print("/evennia/utils/eveditor.py parse 297")
+        print("/evennia/utils/eveditor.py parse 312")
         if arglist and arglist[0].count(':') == 1:
+            print("/evennia/utils/eveditor.py parse 297 path1")
             part1, part2 = arglist[0].split(':')
+            print("/evennia/utils/eveditor.py parse 301")
             if part1 and part1.isdigit():
+                print("/evennia/utils/eveditor.py parse 301 path1")
                 lstart = min(max(0, int(part1)) - 1, nlines)
                 linerange = True
+            print("/evennia/utils/eveditor.py parse 301 path2")
+            print("/evennia/utils/eveditor.py parse 307")
             if part2 and part2.isdigit():
+                print("/evennia/utils/eveditor.py parse 307 path1")
                 lend = min(lstart + 1, int(part2)) + 1
                 linerange = True
+            print("/evennia/utils/eveditor.py parse 307 path2")
         elif arglist and arglist[0].isdigit():
+            print("/evennia/utils/eveditor.py parse 312 path1")
             lstart = min(max(0, int(arglist[0]) - 1), nlines)
             lend = lstart + 1
             linerange = True
+        print("/evennia/utils/eveditor.py parse 297 path2")
+        print("/evennia/utils/eveditor.py parse 312 path2")
+        print("/evennia/utils/eveditor.py parse 320")
         if linerange:
+            print("/evennia/utils/eveditor.py parse 320 path1")
             arglist = arglist[1:]
+        print("/evennia/utils/eveditor.py parse 320 path2")
 
+        print("/evennia/utils/eveditor.py parse 326")
         # nicer output formatting of the line range.
-        lstr = "line %i" % (lstart + 1) if not linerange or lstart + 1 == lend else "lines %i-%i" % (lstart + 1, lend)
+        if not linerange or lstart + 1 == lend:
+            print("/evennia/utils/eveditor.py parse 326 path1")
+            lstr = "line %i" % (lstart + 1)
+        else:
+            print("/evennia/utils/eveditor.py parse 326 path2")
+            lstr = "lines %i-%i" % (lstart + 1, lend)
 
         # arg1 and arg2 is whatever arguments. Line numbers or -ranges are
         # never included here.
         args = " ".join(arglist)
         arg1, arg2 = "", ""
+        print("/evennia/utils/eveditor.py parse 339")
         if len(arglist) > 1:
+            print("/evennia/utils/eveditor.py parse 339 path1")
             arg1, arg2 = arglist[0], " ".join(arglist[1:])
         else:
+            print("/evennia/utils/eveditor.py parse 339 path2")
             arg1 = " ".join(arglist)
 
         # store for use in func()
