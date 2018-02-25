@@ -932,54 +932,101 @@ class DefaultObject(with_metaclass(TypeclassBase, ObjectDB)):
         """
         self.basetype_setup()
         self.at_object_creation()
-
+        print("/evennia/objects/objects.py at_first_save 936")
         if hasattr(self, "_createdict"):
+            print("/evennia/objects/objects.py at_first_save 936 path1")
             # this will only be set if the utils.create function
             # was used to create the object. We want the create
             # call's kwargs to override the values set by hooks.
             cdict = self._createdict
             updates = []
+            print("/evennia/objects/objects.py at_first_save 945")
+            print("/evennia/objects/objects.py at_first_save 953")
             if not cdict.get("key"):
+                print("/evennia/objects/objects.py at_first_save 945 path1")
+                print("/evennia/objects/objects.py at_first_save 948")
                 if not self.db_key:
+                    print("/evennia/objects/objects.py at_first_save 948 path1")
                     self.db_key = "#%i" % self.dbid
                     updates.append("db_key")
+                print("/evennia/objects/objects.py at_first_save 948 path2")
             elif self.key != cdict.get("key"):
+                print("/evennia/objects/objects.py at_first_save 953 path1")
                 updates.append("db_key")
                 self.db_key = cdict["key"]
+            print("/evennia/objects/objects.py at_first_save 945 path2")
+            print("/evennia/objects/objects.py at_first_save 953 path2")
+            print("/evennia/objects/objects.py at_first_save 960")
             if cdict.get("location") and self.location != cdict["location"]:
+                print("/evennia/objects/objects.py at_first_save 960 path1")
                 self.db_location = cdict["location"]
                 updates.append("db_location")
+            print("/evennia/objects/objects.py at_first_save 960 path2")
+            print("/evennia/objects/objects.py at_first_save 966")
             if cdict.get("home") and self.home != cdict["home"]:
+                print("/evennia/objects/objects.py at_first_save 966 path1")
                 self.home = cdict["home"]
                 updates.append("db_home")
+            print("/evennia/objects/objects.py at_first_save 966 path2")
+            print("/evennia/objects/objects.py at_first_save 972")
             if cdict.get("destination") and self.destination != cdict["destination"]:
+                print("/evennia/objects/objects.py at_first_save 972 path1")
                 self.destination = cdict["destination"]
                 updates.append("db_destination")
+            print("/evennia/objects/objects.py at_first_save 972 path2")
+            print("/evennia/objects/objects.py at_first_save 978")
             if updates:
+                print("/evennia/objects/objects.py at_first_save 978 path1")
                 self.save(update_fields=updates)
+            print("/evennia/objects/objects.py at_first_save 978 path2")
 
+            print("/evennia/objects/objects.py at_first_save 984")
             if cdict.get("permissions"):
+                print("/evennia/objects/objects.py at_first_save 984 path1")
                 self.permissions.batch_add(*cdict["permissions"])
+            print("/evennia/objects/objects.py at_first_save 984 path2")
+            print("/evennia/objects/objects.py at_first_save 989")
             if cdict.get("locks"):
+                print("/evennia/objects/objects.py at_first_save 989 path1")
                 self.locks.add(cdict["locks"])
+            print("/evennia/objects/objects.py at_first_save 989 path2")
+            print("/evennia/objects/objects.py at_first_save 994")
             if cdict.get("aliases"):
+                print("/evennia/objects/objects.py at_first_save 994 path1")
                 self.aliases.batch_add(*cdict["aliases"])
+            print("/evennia/objects/objects.py at_first_save 994 path2")
+            print("/evennia/objects/objects.py at_first_save 999")
             if cdict.get("location"):
+                print("/evennia/objects/objects.py at_first_save 999 path1")
                 cdict["location"].at_object_receive(self, None)
                 self.at_after_move(None)
+            print("/evennia/objects/objects.py at_first_save 999 path2")
+            print("/evennia/objects/objects.py at_first_save 1005")
             if cdict.get("tags"):
+                print("/evennia/objects/objects.py at_first_save 1005 path1")
                 # this should be a list of tags
                 self.tags.batch_add(*cdict["tags"])
+            print("/evennia/objects/objects.py at_first_save 1005 path2")
+            print("/evennia/objects/objects.py at_first_save 1011")
             if cdict.get("attributes"):
+                print("/evennia/objects/objects.py at_first_save 1011 path1")
                 # this should be a dict of attrname:value
                 self.attributes.batch_add(*cdict["attributes"])
+            print("/evennia/objects/objects.py at_first_save 1011 path2")
+            print("/evennia/objects/objects.py at_first_save 1017")
             if cdict.get("nattributes"):
+                print("/evennia/objects/objects.py at_first_save 1017 path1")
                 # this should be a dict of nattrname:value
+                print("/evennia/objects/objects.py at_first_save 1021")
                 for key, value in cdict["nattributes"].items():
+                    print("/evennia/objects/objects.py at_first_save 1021 path1")
                     self.nattributes.add(key, value)
+                print("/evennia/objects/objects.py at_first_save 1021 path2")
 
+            print("/evennia/objects/objects.py at_first_save 1017 path2")
             del self._createdict
 
+        print("/evennia/objects/objects.py at_first_save 936 path2")
         self.basetype_posthook_setup()
 
     # hooks called by the game engine #
