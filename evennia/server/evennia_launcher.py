@@ -23,6 +23,8 @@ from subprocess import Popen, check_output, call, CalledProcessError, STDOUT
 import django
 
 # Signal processing
+import branchlogger
+
 SIG = signal.SIGINT
 CTRL_C_EVENT = 0  # Windows SIGINT-like signal
 
@@ -1190,6 +1192,8 @@ def main():
 
     """
 
+    setup_branch_logging()
+
     # set up argument parser
 
     parser = ArgumentParser(description=CMDLINE_HELP)
@@ -1247,7 +1251,7 @@ def main():
 
     # handle arguments
     option, service = args.operation, args.service
-
+    print(option)
     # make sure we have everything
     check_main_evennia_dependencies()
 
@@ -1343,8 +1347,22 @@ def main():
     else:
         # no input; print evennia info
         print(ABOUT_INFO)
+    analyze_branch_logging()
+
+
+def setup_branch_logging():
+    print("Doing setups")
+    branchlogger.branchdata = {
+    }
+
+
+def analyze_branch_logging():
+    # TODO
+    print("branches were covered!")
+    print(branchlogger.branchdata)
 
 
 if __name__ == '__main__':
     # start Evennia from the command line
     main()
+
