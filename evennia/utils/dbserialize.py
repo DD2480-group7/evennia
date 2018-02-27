@@ -31,6 +31,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 from evennia.utils.utils import to_str, uses_database
 from evennia.utils import logger
+import branchlogger
 
 __all__ = ("to_pickle", "from_pickle", "do_pickle", "do_unpickle",
            "dbserialize", "dbunserialize")
@@ -491,30 +492,42 @@ def to_pickle(data):
 
     """
     def process_item(item):
+        # For counting branches and coverage ad-hoc
+        branchdata = branchlogger.branchdata["evennia/utils/dbserialize.py"]["to_pickle.process_item"]
+
         """Recursive processor and identification of data"""
         dtype = type(item)
         if dtype in (basestring, int, float, bool):
+            branchdata[0].append(0)
             return item
         elif dtype == tuple:
+            branchdata[0].append(1)
             return tuple(process_item(val) for val in item)
         elif dtype in (list, _SaverList):
+            branchdata[0].append(2)
             return [process_item(val) for val in item]
         elif dtype in (dict, _SaverDict):
+            branchdata[0].append(3)
             return dict((process_item(key), process_item(val)) for key, val in item.items())
         elif dtype in (set, _SaverSet):
+            branchdata[0].append(4)
             return set(process_item(val) for val in item)
         elif dtype in (OrderedDict, _SaverOrderedDict):
+            branchdata[0].append(5)
             return OrderedDict((process_item(key), process_item(val)) for key, val in item.items())
         elif dtype in (deque, _SaverDeque):
+            branchdata[0].append(6)
             return deque(process_item(val) for val in item)
 
         elif hasattr(item, '__iter__'):
+            branchdata[0].append(7)
             # we try to conserve the iterable class, if not convert to list
             try:
                 return item.__class__([process_item(val) for val in item])
             except (AttributeError, TypeError):
                 return [process_item(val) for val in item]
         elif hasattr(item, "sessid") and hasattr(item, "conn_time"):
+            branchdata[0].append(8)
             return pack_session(item)
         return pack_dbobj(item)
     return process_item(data)

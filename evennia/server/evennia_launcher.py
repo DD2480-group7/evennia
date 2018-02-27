@@ -1356,6 +1356,9 @@ def setup_branch_logging():
         "evennia/commands/default/building.py": {
             "CmdSetObjAlias/func": [[], [], [], [], [], []],  # same as number of branches
         },
+        "evennia/utils/dbserialize.py": {
+        	"to_pickle.process_item": [[]],
+        },
     }
 
 
