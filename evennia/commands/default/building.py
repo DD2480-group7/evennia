@@ -6,6 +6,8 @@ from builtins import range
 import re
 from django.conf import settings
 from django.db.models import Q
+
+import branchlogger
 from evennia.objects.models import ObjectDB
 from evennia.locks.lockhandler import LockException
 from evennia.commands.cmdhandler import get_and_merge_cmdsets
@@ -122,42 +124,64 @@ class CmdSetObjAlias(COMMAND_DEFAULT_CLASS):
     help_category = "Building"
 
     def func(self):
+        branchdata = branchlogger.branchdata["evennia/commands/default/building.py"]["CmdSetObjAlias/func"]
+
         """Set the aliases."""
 
         caller = self.caller
 
         if not self.lhs:
+            branchdata[0].append(0)
             string = "Usage: @alias <obj> [= [alias[,alias ...]]]"
             self.caller.msg(string)
             return
+        else:
+            branchdata[0].append(1)
         objname = self.lhs
 
         # Find the object to receive aliases
         obj = caller.search(objname)
         if not obj:
+            branchdata[1].append(0)
             return
+        else:
+            branchdata[1].append(1)
+
         if self.rhs is None:
+            branchdata[2].append(0)
             # no =, so we just list aliases on object.
             aliases = obj.aliases.all()
             if aliases:
+                branchdata[3].append(0)
                 caller.msg("Aliases for '%s': %s" % (obj.get_display_name(caller), ", ".join(aliases)))
             else:
+                branchdata[3].append(1)
                 caller.msg("No aliases exist for '%s'." % obj.get_display_name(caller))
             return
+        else:
+            branchdata[2].append(1)
 
         if not (obj.access(caller, "control") or obj.access(caller, 'edit')):
+            branchdata[4].append(0)
             caller.msg("You don't have permission to do that.")
             return
+        else:
+            branchdata[4].append(1)
 
         if not self.rhs:
+            branchdata[5].append(0)
             # we have given an empty =, so delete aliases
             old_aliases = obj.aliases.all()
             if old_aliases:
+                branchdata[6].append(0)
                 caller.msg("Cleared aliases from %s: %s" % (obj.get_display_name(caller), ", ".join(old_aliases)))
                 obj.aliases.clear()
             else:
+                branchdata[6].append(1)
                 caller.msg("No aliases to clear.")
             return
+        else:
+            branchdata[5].append(1)
 
         # merge the old and new aliases (if any)
         old_aliases = obj.aliases.all()

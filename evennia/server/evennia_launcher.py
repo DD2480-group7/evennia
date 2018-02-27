@@ -1353,6 +1353,9 @@ def main():
 def setup_branch_logging():
     print("Doing setups")
     branchlogger.branchdata = {
+        "evennia/commands/default/building.py": {
+            "CmdSetObjAlias/func": [[], [], [], [], [], []],  # same as number of branches
+        },
     }
 
 
